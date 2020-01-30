@@ -6,7 +6,7 @@
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/26 14:34:30 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/28 19:33:59 by juolivei         ###   ########.fr       */
+/*   Updated: 2020/01/29 14:42:01 by juolivei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,8 @@ char			*ft_strcpy(char *dest, const char *src);
 char			*ft_strcat(char *dest, const char *src);
 char			*ft_strjoin(char const *s1, char const *s2);
 char			*ft_strchr(const char *s, int c);
+#endif
+
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 32
 #endif

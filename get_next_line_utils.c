@@ -6,13 +6,13 @@
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 19:18:02 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/28 19:22:00 by juolivei         ###   ########.fr       */
+/*   Updated: 2020/01/29 09:41:08 by juolivei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strlen(const char *s)
+int		ft_strlen(const char *s)
 {
 	int count;
 

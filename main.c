@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rem_main.c                                         :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/26 15:26:21 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/26 15:46:55 by juolivei         ###   ########.fr       */
+/*   Created: 2020/01/30 09:13:24 by juolivei          #+#    #+#             */
+/*   Updated: 2020/01/30 09:25:29 by juolivei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,21 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-int	main(int argc, char *argv[])
+int		main(int argc, char *argv[])
 {
-	int		fd;
-	int		n_lines;
-	char	*line;
+	int fd;
+	char *line;
 
-	n_lines = atoi(argv[2]);
-	if (argc != 3)
+	if (argc == 1)
+		fd = open("arquivo", O_RDONLY);
+	else
+		fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
 	{
-		printf("usage: %s 'PATH TO FILE' 'NUMBER OF LINES TO OUTPUT'\n", argv[0]);
-		return (1);
+		printf("Valor de FD: %i\n", fd);
+		return (-1);
 	}
-	if (!(fd = open(argv[1], O_RDONLY)))
-		return (1);
-	while (n_lines > 0 || get_next_line(fd, &line) > 0)
-	{
-		printf("%s\n", line);
-		n_lines--;
-	}
-	if (!(close(fd)))
-		return (1);
+	while (get_next_line(fd, &line) > 0)
+		printf("%s", line);
 	return (0);
 }
