@@ -5,113 +5,130 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/28 13:20:33 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/29 11:12:05 by juolivei         ###   ########.fr       */
+/*   Created: 2020/01/30 17:03:55 by juolivei          #+#    #+#             */
+/*   Updated: 2020/01/30 21:15:41 by juolivei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*ft_strdup(const char *s)
+static char	*ft_strjoin(char *s1, char *s2)
 {
-	int		s_len;
-	char	*new_s;
+	int		i;
+	int		j;
+	char	*n_str;
 
-	s_len = ft_strlen(s);
-	if (!(new_s = malloc((s_len + 1) * sizeof(char))))
-		return (NULL);
-	while (s_len >= 0)
-	{
-		new_s[s_len] = (char)s[s_len];
-		s_len--;
-	}
-	return (new_s);
-}
-
-static char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	size_t	i;
-	char	*sub_s;
-
-	if (!s)
-		return (NULL);
 	i = 0;
-	if (!(sub_s = (char *)malloc((len + 1) * sizeof(char))))
+	j = 0;
+	if (!(n_str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1)))
 		return (NULL);
-	if (start > (unsigned int)ft_strlen(s))
-		return (sub_s);
-	sub_s[len] = '\0';
-	while (i < len)
+	while (s1[i] != '\0')
 	{
-		sub_s[i] = ((char *)s)[start];
+		n_str[i] = s1[i];
 		i++;
-		start++;
 	}
-	return (sub_s);
+	while (s2[j] != '\0')
+		n_str[i++] = s2[j++];
+	n_str[i] = '\0';
+	free(s1);
+	return (n_str);
 }
 
-static void	ft_clear(char **file)
+static int	new(char **line, char *buffer)
 {
-	if (file && *file)
+	char	*new;
+
+	new = buffer;
+	while (*new)
 	{
-		free(*file);
-		*file = (char *)'\0';
+		if (*new == '\n')
+			break ;
+		new++;
 	}
+	if (*new != '\n')
+		new = NULL;
+	if (new == NULL)
+		return (0);
+	*new = '\0';
+	*line = ft_strjoin(*line, buffer);
+	if (*line == NULL)
+		return (2);
+	*new = '\n';
+	ft_memmove(buffer, new, ft_strlen(new));
+	buffer[ft_strlen(new)] = '\0';
+	return (1);
 }
 
-static int	ft_local_store(char **file, char **line, int read_ret)
+static int	ft_readcycle(int fd, char **line, char *buffer)
 {
-	int		size;
-	char	*tmp;
+	int		read_ret;
+	int		have_line;
 
+	read_ret = 1;
+	while ((read_ret = read(fd, buffer, BUFFER_SIZE)) > 0)
+	{
+		buffer[read_ret] = '\0';
+		have_line = new(line, buffer);
+		if (have_line)
+			if (have_line > 1)
+				return (-1);
+			else
+				return (1);
+		else
+		{
+			*line = ft_strjoin(*line, buffer);
+			if (!(*line))
+				return (-1);
+		}
+	}
 	if (read_ret < 0)
 		return (-1);
-	if (read_ret == 0 && !*file)
-		return (0);
-	size = 0;
-	while ((*file)[size] != '\n' && (*file)[size] != '\0')
-		size++;
-	if ((*file)[size] == '\n')
+	return (read_ret == 0 ? 0 : 1);
+}
+
+static int	ft_checkbuffer(char **line, char *buffer, int *read_ret)
+{
+	int		i;
+	char	*tmp;
+
+	tmp = buffer;
+	tmp++;
+	i = ft_strlen(tmp);
+	ft_memmove(buffer, tmp, i);
+	buffer[i] = '\0';
+	i = new(line, buffer);
+	if (i > 0)
 	{
-		*line = ft_substr(*file, 0, size);
-		tmp = ft_strdup(&((*file)[size + 1]));
-		free(*file);
-		*file = tmp;
-		if (!(*file)[0])
-			ft_clear(file);
+		if (i == 2)
+			*read_ret = -1;
+		else
+			*read_ret = 1;
 	}
 	else
 	{
-		*line = ft_strdup(*file);
-		ft_clear(file);
+		if (!(*line = ft_strjoin(*line, buffer)))
+			return (-1);
+		return (0);
 	}
+	*read_ret = 1;
 	return (1);
 }
 
 int			get_next_line(int fd, char **line)
 {
+	int			flag;
 	int			read_ret;
-	int			status_ret;
-	char		*tmp;
-	static char	*file[20];
-	char		buffer[BUFFER_SIZE + 1];
+	static char	buffer[OPEN_MAX][BUFFER_SIZE + 1];
 
-	if ((fd < 0) || (line == NULL))
+	if (fd < 0 || !line || fd > OPEN_MAX ||\
+			read(fd, NULL, 0) < 0 || BUFFER_SIZE < 1)
 		return (-1);
-	while ((read_ret = read(fd, buffer, BUFFER_SIZE)) > 0)
-	{
-		buffer[read_ret] = '\0';
-		if (!file[fd])
-			file[fd] = ft_strdup(buffer);
-		else
-		{
-			tmp = ft_strjoin(file[fd], buffer);
-			free(file[fd]);
-			file[fd] = tmp;
-		}
-		if (ft_strchr(file[fd], '\n'))
-			break ;
-	}
-	status_ret = ft_local_store(&file[fd], line, read_ret);
-	return (status_ret);
+	if (!(*line = ft_strdup("")))
+		return (-1);
+	flag = 0;
+	if (buffer[fd][0] == '\n')
+		flag = ft_checkbuffer(line, buffer[fd], &read_ret);
+	if (!flag)
+		read_ret = ft_readcycle(fd, line, buffer[fd]);
+	return (read_ret);
 }

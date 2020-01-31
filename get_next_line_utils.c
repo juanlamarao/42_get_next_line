@@ -5,80 +5,77 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/28 19:18:02 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/29 09:41:08 by juolivei         ###   ########.fr       */
+/*   Created: 2020/01/30 20:37:12 by juolivei          #+#    #+#             */
+/*   Updated: 2020/01/30 20:41:18 by juolivei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		ft_strlen(const char *s)
+char	*free_and_return_null(char *s)
 {
-	int count;
-
-	count = 0;
-	while (s[count])
-		count++;
-	return (count);
-}
-
-char	*ft_strcpy(char *dest, const char *src)
-{
-	int number;
-
-	number = 0;
-	while (src[number] != '\0')
-	{
-		dest[number] = ((char *)src)[number];
-		number++;
-	}
-	dest[number] = ((char *)src)[number];
-	return (dest);
-}
-
-char	*ft_strcat(char *dest, const char *src)
-{
-	int sizedest;
-	int sizesrc;
-	int total;
-	int nsrc;
-
-	sizesrc = ft_strlen(src);
-	sizedest = ft_strlen(dest);
-	total = sizesrc + sizedest;
-	nsrc = 0;
-	while (sizedest < total)
-	{
-		dest[sizedest] = ((char *)src)[nsrc];
-		sizedest++;
-		nsrc++;
-	}
-	dest[sizedest] = '\0';
-	return (dest);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	int		full_len;
-	char	*new_str;
-
-	full_len = ft_strlen(s1) + ft_strlen(s2);
-	if (!(new_str = (char *)malloc((full_len + 1) * sizeof(*s1))))
-		return (NULL);
-	ft_strcpy(new_str, s1);
-	ft_strcat(new_str, s2);
-	return (new_str);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	while (*s)
-	{
-		if (*s == c)
-			return ((char *)s);
-		s++;
-	}
-	if (*s == c)
-		return ((char *)s);
+	free(s);
 	return (NULL);
+}
+
+size_t	ft_strlen(const char *str)
+{
+	size_t char_count;
+
+	char_count = 0;
+	while (str[char_count] != '\0')
+	{
+		char_count++;
+	}
+	return (char_count);
+}
+
+void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	char	*dstcpy;
+	char	*srccpy;
+	int		i;
+
+	if (!dst && !src)
+		return (NULL);
+	i = 0;
+	dstcpy = (char*)dst;
+	srccpy = (char*)src;
+	if (dst < src)
+		while (i < (int)len)
+		{
+			dstcpy[i] = srccpy[i];
+			i++;
+		}
+	else
+	{
+		i = (int)len;
+		while (i != 0)
+		{
+			dstcpy[i - 1] = srccpy[i - 1];
+			i--;
+		}
+	}
+	return (dstcpy);
+}
+
+char	*ft_strdup(const char *s1)
+{
+	int		size;
+	int		i;
+	char	*tmp;
+
+	size = 0;
+	i = 0;
+	size = ft_strlen(s1);
+	tmp = malloc(sizeof(char) * size + 1);
+	if (tmp == NULL)
+		return (NULL);
+	while (i < size)
+	{
+		tmp[i] = s1[i];
+		i++;
+	}
+	tmp[i] = '\0';
+	return (tmp);
 }
