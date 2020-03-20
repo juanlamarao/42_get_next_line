@@ -6,7 +6,7 @@
 /*   By: juolivei <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/26 14:34:30 by juolivei          #+#    #+#             */
-/*   Updated: 2020/01/30 20:46:32 by juolivei         ###   ########.fr       */
+/*   Updated: 2020/03/20 00:52:28 by id_na_int        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,8 @@ char	*ft_strchr(const char *s, int c);
 
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 32
+#endif
+
+#ifndef OPEN_MAX
+# define OPEN_MAX 256
 #endif
